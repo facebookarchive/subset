@@ -11,9 +11,9 @@ type test struct {
 }
 
 type sample struct {
-	Answer int
-	Name   string
-	Child  *sample
+	Answer  int
+	Name    string
+	Child   *sample
 	private string
 }
 
