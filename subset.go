@@ -17,6 +17,18 @@ type visit struct {
 	next *visit
 }
 
+// Ideally we'ed be able to use reflec.valueInterface(v, false) and
+// look at unexported fields, but for now we just ignore them.
+func safeInterface(v reflect.Value) (i interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			// fmt.Println("Recovered safeInterface:", err)
+			i = nil
+		}
+	}()
+	return v.Interface()
+}
+
 // Tests for deep equality using reflected types. The map argument tracks
 // comparisons that have already been seen, which allows short circuiting on
 // recursive types.
@@ -140,16 +152,21 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		// Can't do better than this:
 		return false
 	default:
-		// fmt.Println("Kind: default", expected.Interface(), target.Interface())
+		expectedInterface := safeInterface(expected)
+		if expectedInterface == nil {
+			return true
+		}
+		targetInterface := target.Interface() // expect this to be safe now
+		// fmt.Println("Kind: default", expectedInterface, targetInterface)
 		// ignore zero value expectations
 		zeroValue := reflect.Zero(expected.Type())
-		if reflect.DeepEqual(expected.Interface(), zeroValue.Interface()) {
+		if reflect.DeepEqual(expectedInterface, zeroValue.Interface()) {
 			// fmt.Println("Expecting zero value")
 			return true
 		}
 
 		// Normal equality suffices
-		return reflect.DeepEqual(expected.Interface(), target.Interface())
+		return reflect.DeepEqual(expectedInterface, targetInterface)
 	}
 
 	panic("Not reached")

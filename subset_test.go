@@ -14,6 +14,7 @@ type sample struct {
 	Answer int
 	Name   string
 	Child  *sample
+	private string
 }
 
 var (
