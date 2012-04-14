@@ -21,10 +21,16 @@ type visit struct {
 // comparisons that have already been seen, which allows short circuiting on
 // recursive types.
 func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, depth int) (b bool) {
-	if !expected.IsValid() || !target.IsValid() {
-		return expected.IsValid() == target.IsValid()
+	if !expected.IsValid() {
+		// fmt.Println("!expected.IsValid()")
+		return true
+	}
+	if !target.IsValid() {
+		// fmt.Println("!target.IsValid()")
+		return false
 	}
 	if expected.Type() != target.Type() {
+		// fmt.Println("Type() differs")
 		return false
 	}
 
@@ -59,6 +65,7 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 
 	switch expected.Kind() {
 	case reflect.Array:
+		// fmt.Println("Kind: Array")
 		if expected.Len() == 0 {
 			return true
 		}
@@ -72,6 +79,7 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		}
 		return true
 	case reflect.Slice:
+		// fmt.Println("Kind: Slice")
 		if expected.IsNil() {
 			return true
 		}
@@ -88,6 +96,7 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		}
 		return true
 	case reflect.Interface:
+		// fmt.Println("Kind: Interface")
 		if expected.IsNil() {
 			return true
 		}
@@ -96,8 +105,10 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		}
 		return checkSubset(expected.Elem(), target.Elem(), visited, depth+1)
 	case reflect.Ptr:
+		// fmt.Println("Kind: Ptr")
 		return checkSubset(expected.Elem(), target.Elem(), visited, depth+1)
 	case reflect.Struct:
+		// fmt.Println("Kind: Struct")
 		for i, n := 0, expected.NumField(); i < n; i++ {
 			if !checkSubset(expected.Field(i), target.Field(i), visited, depth+1) {
 				return false
@@ -105,6 +116,7 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		}
 		return true
 	case reflect.Map:
+		// fmt.Println("Kind: Map")
 		if expected.IsNil() {
 			return true
 		}
@@ -121,15 +133,18 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		}
 		return true
 	case reflect.Func:
+		// fmt.Println("Kind: Func")
 		if expected.IsNil() && target.IsNil() {
 			return true
 		}
 		// Can't do better than this:
 		return false
 	default:
+		// fmt.Println("Kind: default", expected.Interface(), target.Interface())
 		// ignore zero value expectations
 		zeroValue := reflect.Zero(expected.Type())
 		if reflect.DeepEqual(expected.Interface(), zeroValue.Interface()) {
+			// fmt.Println("Expecting zero value")
 			return true
 		}
 
