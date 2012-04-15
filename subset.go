@@ -17,6 +17,11 @@ type visit struct {
 	next *visit
 }
 
+// This is how our assertion will fail.
+type Fatalf interface {
+	Fatalf(format string, args ...interface{})
+}
+
 // Ideally we'ed be able to use reflec.valueInterface(v, false) and
 // look at unexported fields, but for now we just ignore them.
 func safeInterface(v reflect.Value) (i interface{}) {
@@ -188,4 +193,13 @@ func Check(expected, target interface{}) bool {
 		reflect.ValueOf(target),
 		make(map[uintptr]*visit),
 		0)
+}
+
+// Fatal if not a subset with a useful message.
+// TODO should pretty print and show a colored side-by-side diff?
+func Assert(t Fatalf, expected interface{}, actual interface{}) {
+	if !Check(expected, actual) {
+		t.Fatalf("Did not find expected subset:\n%+v\nInstead found:\n%+v",
+			expected, actual)
+	}
 }
