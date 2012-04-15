@@ -1,4 +1,4 @@
-language: node_js
+language: erlang
 
 script:
  - curl http://w.daaku.org/go.travis/install | sh
