@@ -1,10 +1,7 @@
-language: erlang
+language: node_js
 
 install:
  - curl http://w.daaku.org/go.travis/install | sh
- - env
- - mkdir $HOME/src/github.com/nshah/
- - ln -s $HOME/builds/nshah/go.subset $HOME/src/github.com/nshah/go.subset
 
 script:
  - env
