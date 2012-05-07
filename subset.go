@@ -1,4 +1,5 @@
-// Deep subset test via reflection. Based on reflect/deepcopy.go.
+// Package subset implements logic to check if a value is a subset of
+// another using reflect.
 package subset
 
 import (
