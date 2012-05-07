@@ -1,5 +1,4 @@
 // Deep subset test via reflection. Based on reflect/deepcopy.go.
-
 package subset
 
 import (
