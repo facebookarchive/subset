@@ -53,7 +53,7 @@ func TestSubsets(t *testing.T) {
 func TestNotSubsets(t *testing.T) {
 	for _, d := range notSubsetTests {
 		if Check(d.A, d.B) {
-			t.Errorf("Was expecting Check(%v, %v) == false.", d.Name, d.A, d.B)
+			t.Errorf("Was expecting %s Check(%v, %v) == false.", d.Name, d.A, d.B)
 		}
 	}
 }

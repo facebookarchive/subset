@@ -173,8 +173,6 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		// Normal equality suffices
 		return reflect.DeepEqual(expectedInterface, targetInterface)
 	}
-
-	panic("Not reached")
 }
 
 // Check tests for deep subset. It uses normal == equality where
