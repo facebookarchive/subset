@@ -140,9 +140,6 @@ func checkSubset(expected, target reflect.Value, visited map[uintptr]*visit, dep
 		if expected.IsNil() != target.IsNil() {
 			return false
 		}
-		if expected.Len() != target.Len() {
-			return false
-		}
 		for _, k := range expected.MapKeys() {
 			if !checkSubset(expected.MapIndex(k), target.MapIndex(k), visited, depth+1) {
 				return false
