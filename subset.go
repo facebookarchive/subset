@@ -17,7 +17,7 @@ type visit struct {
 	next *visit
 }
 
-// This is how our assertion will fail.
+// Fatalf is how our assertion will fail.
 type Fatalf interface {
 	Fatalf(format string, args ...interface{})
 }
@@ -190,7 +190,7 @@ func Check(expected, target interface{}) bool {
 		0)
 }
 
-// Fatal if not a subset with a useful message.
+// Assert will fatal if not a subset with a useful message.
 // TODO should pretty print and show a colored side-by-side diff?
 func Assert(t Fatalf, expected interface{}, actual interface{}) {
 	if !Check(expected, actual) {
